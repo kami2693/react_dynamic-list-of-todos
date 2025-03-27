@@ -22,9 +22,40 @@ src/
 │   └── TodoModal/       # Компонент модального вікна
 ├── types/
 │   ├── Todo.ts          # Типи для завдань
-│   └── User.ts          # Типи для користувачів
+│   ├── User.ts          # Типи для користувачів
+│   └── FilterStatus.ts  # Enum для статусів фільтрації
 ├── App.tsx              # Головний компонент
 └── index.tsx            # Точка входу
+```
+
+## Типи даних
+
+### Todo
+```typescript
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+  userId: number;
+}
+```
+
+### User
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+```
+
+### FilterStatus
+```typescript
+enum FilterStatus {
+  All = 'all',
+  Completed = 'completed',
+  Active = 'active'
+}
 ```
 
 ## Компоненти
@@ -33,100 +64,97 @@ src/
 Головний компонент додатку, який керує станом та логікою.
 
 **Стан:**
-- `todos`: масив завдань [рядки 14-15](src/App.tsx#L14-L15)
-- `loading`: стан завантаження [рядки 16-17](src/App.tsx#L16-L17)
-- `selectedTodo`: вибране завдання [рядки 18-19](src/App.tsx#L18-L19)
-- `selectedUser`: користувач вибраного завдання [рядки 20-21](src/App.tsx#L20-L21)
-- `filter`: поточний фільтр [рядки 22-23](src/App.tsx#L22-L23)
-- `searchQuery`: пошуковий запит [рядки 24-25](src/App.tsx#L24-L25)
-- `modalLoading`: стан завантаження модального вікна [рядки 26-27](src/App.tsx#L26-L27)
+- `todos`: масив завдань
+- `loading`: стан завантаження списку завдань
+- `selectedTodo`: вибране завдання
+- `selectedUser`: користувач вибраного завдання
+- `filter`: поточний фільтр (FilterStatus)
+- `searchQuery`: пошуковий запит
+- `modalLoading`: стан завантаження даних користувача
 
 **Основні функції:**
-- `handleCloseModal`: закриття модального вікна [рядки 29-32](src/App.tsx#L29-L32)
-- `handleShowTodo`: відкриття модального вікна з деталями завдання [рядки 34-42](src/App.tsx#L34-L42)
-- `filteredTodos`: фільтрація завдань за статусом та пошуковим запитом [рядки 44-52](src/App.tsx#L44-L52)
+- `handleCloseModal`: закриття модального вікна
+- `handleShowTodo`: відкриття модального вікна з деталями завдання
+- `filteredTodos`: фільтрація завдань за статусом та пошуковим запитом
 
 ### TodoList
 Компонент для відображення списку завдань.
 
 **Підкомпоненти:**
-- `TodoItem`: окремий рядок з завданням [рядки 15-35](src/components/TodoList/TodoList.tsx#L15-L35)
+- `TodoItem`: окремий рядок з завданням
 
 **Функціональність:**
-- Відображення ID завдання [рядки 19-20](src/components/TodoList/TodoList.tsx#L19-L20)
-- Індикатор завершення [рядки 21-23](src/components/TodoList/TodoList.tsx#L21-L23)
-- Назва завдання з кольоровим маркуванням [рядки 24-26](src/components/TodoList/TodoList.tsx#L24-L26)
-- Кнопка перегляду деталей [рядки 27-29](src/components/TodoList/TodoList.tsx#L27-L29)
+- Відображення ID завдання
+- Індикатор завершення
+- Назва завдання з кольоровим маркуванням
+- Кнопка перегляду деталей
 
 ### TodoModal
 Модальне вікно для відображення деталей завдання.
 
 **Підкомпоненти:**
-- `ModalHeader`: заголовок модального вікна [рядки 15-25](src/components/TodoModal/TodoModal.tsx#L15-L25)
-- `ModalContent`: вміст модального вікна [рядки 27-45](src/components/TodoModal/TodoModal.tsx#L27-L45)
+- `ModalHeader`: заголовок модального вікна
+- `ModalContent`: вміст модального вікна
 
 **Функціональність:**
-- Відображення ID завдання [рядки 30-31](src/components/TodoModal/TodoModal.tsx#L30-L31)
-- Назва завдання [рядки 32-33](src/components/TodoModal/TodoModal.tsx#L32-L33)
-- Статус завдання (Done/Planned) [рядки 34-35](src/components/TodoModal/TodoModal.tsx#L34-L35)
-- Інформація про користувача [рядки 36-40](src/components/TodoModal/TodoModal.tsx#L36-L40)
-- Кнопка закриття [рядки 41-43](src/components/TodoModal/TodoModal.tsx#L41-L43)
+- Відображення ID завдання
+- Назва завдання
+- Статус завдання (Done/Planned)
+- Інформація про користувача
+- Кнопка закриття
+- Індикатор завантаження даних користувача
 
 ### TodoFilter
 Компонент для фільтрації та пошуку завдань.
 
 **Функціональність:**
-- Вибір статусу (all/active/completed) [рядки 15-25](src/components/TodoFilter/TodoFilter.tsx#L15-L25)
-- Пошук за назвою [рядки 27-35](src/components/TodoFilter/TodoFilter.tsx#L27-L35)
-- Кнопка очищення пошуку [рядки 37-39](src/components/TodoFilter/TodoFilter.tsx#L37-L39)
+- Вибір статусу (all/active/completed)
+- Пошук за назвою
+- Кнопка очищення пошуку
 
 ## API Endpoints
 
 ### getTodos
 ```typescript
 const getTodos = async (): Promise<Todo[]> => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/todos');
+  const response = await fetch(`${BASE_URL}/todos.json`);
+  await wait(300); // Симуляція затримки мережі
   return response.json();
 };
 ```
-[Джерело](src/api/index.ts#L1-L5)
 
 ### getUser
 ```typescript
 const getUser = async (userId: number): Promise<User> => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+  const response = await fetch(`${BASE_URL}/users/${userId}.json`);
+  await wait(300); // Симуляція затримки мережі
   return response.json();
 };
 ```
-[Джерело](src/api/index.ts#L7-L11)
 
 ## Оптимізації
 
 ### Мемоізація
-- Використання `useCallback` для функцій [рядки 29-32](src/App.tsx#L29-L32)
-- Мемоізація компонентів через `React.memo` [рядки 37-39](src/App.tsx#L37-L39)
-- Оптимізована фільтрація даних [рядки 44-52](src/App.tsx#L44-L52)
+- Використання `useCallback` для функцій
+- Мемоізація компонентів через `React.memo`
+- Оптимізована фільтрація даних
 
 ### Рендеринг
-- Умовний рендеринг компонентів [рядки 54-56](src/App.tsx#L54-L56)
-- Оптимізоване відображення списку [рядки 58-62](src/App.tsx#L58-L62)
-- Ефективна робота з модальним вікном [рядки 64-70](src/App.tsx#L64-L70)
+- Умовний рендеринг компонентів
+- Оптимізоване відображення списку
+- Ефективна робота з модальним вікном
+- Ліниве завантаження даних користувача
 
 ### Стилізація
-- Використання Bulma CSS фреймворку [рядки 3-4](src/App.tsx#L3-L4)
-- Іконки Font Awesome [рядки 3-4](src/App.tsx#L3-L4)
+- Використання Bulma CSS фреймворку
+- Іконки Font Awesome
 - Адаптивний дизайн
 
 ## Тестування
-- Unit тести для компонентів [рядки 1-10](src/App.test.tsx#L1-L10)
-- Інтеграційні тести [рядки 12-20](src/App.test.tsx#L12-L20)
-- Тестування API взаємодії [рядки 22-30](src/App.test.tsx#L22-L30)
-
-## Стилізація
-- Використання Bulma CSS фреймворку [рядки 3-4](src/App.tsx#L3-L4)
-- Іконки Font Awesome [рядки 3-4](src/App.tsx#L3-L4)
-- Адаптивний дизайн
-- Анімації для модального вікна [рядки 1-15](src/components/TodoModal/TodoModal.scss#L1-L15)
+- E2E тести з використанням Cypress
+- Тестування API взаємодії
+- Тестування UI компонентів
+- Тестування станів завантаження
 
 ## Вимоги до середовища
 - Node.js 14+
@@ -144,6 +172,7 @@ const getUser = async (userId: number): Promise<User> => {
 - TypeScript
 - Bulma CSS
 - Font Awesome
-- Jest для тестування
+- Cypress для E2E тестування
 - ESLint для лінтування
 - Prettier для форматування
+- Vite для збірки проекту
