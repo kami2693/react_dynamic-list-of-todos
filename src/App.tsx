@@ -4,6 +4,7 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { Todo } from './types/Todo';
 import { User } from './types/User';
+import { FilterStatus } from './types/FilterStatus';
 import { getTodos, getUser } from './api';
 
 import { TodoList } from './components/TodoList';
@@ -11,14 +12,12 @@ import { TodoFilter } from './components/TodoFilter';
 import { TodoModal } from './components/TodoModal';
 import { Loader } from './components/Loader';
 
-type FilterStatus = 'all' | 'completed' | 'active';
-
 export const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [filter, setFilter] = useState<FilterStatus>('all');
+  const [filter, setFilter] = useState<FilterStatus>(FilterStatus.All);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalLoading, setModalLoading] = useState(false);
 
@@ -45,7 +44,6 @@ export const App = () => {
     async (todo: Todo) => {
       if (selectedTodo?.id === todo.id) {
         handleCloseModal();
-
         return;
       }
 
@@ -53,20 +51,19 @@ export const App = () => {
       setModalLoading(true);
       try {
         const user = await getUser(todo.userId);
-
         setSelectedUser(user);
       } finally {
         setModalLoading(false);
       }
     },
-    [selectedTodo, handleCloseModal],
+    [handleCloseModal],
   );
 
   const filteredTodos = todos.filter(todo => {
     const matchesStatus =
-      filter === 'all'
+      filter === FilterStatus.All
         ? true
-        : filter === 'completed'
+        : filter === FilterStatus.Completed
           ? todo.completed
           : !todo.completed;
 

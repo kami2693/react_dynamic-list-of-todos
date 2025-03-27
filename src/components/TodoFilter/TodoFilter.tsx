@@ -1,6 +1,9 @@
+import React from 'react';
+import { FilterStatus } from '../../types/FilterStatus';
+
 interface Props {
-  filter: 'all' | 'completed' | 'active';
-  onFilterChange: (filter: 'all' | 'completed' | 'active') => void;
+  filter: FilterStatus;
+  onFilterChange: (filter: FilterStatus) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
@@ -17,13 +20,11 @@ export const TodoFilter: React.FC<Props> = ({
         <select
           data-cy="statusSelect"
           value={filter}
-          onChange={e =>
-            onFilterChange(e.target.value as 'all' | 'completed' | 'active')
-          }
+          onChange={e => onFilterChange(e.target.value as FilterStatus)}
         >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
+          <option value={FilterStatus.All}>All</option>
+          <option value={FilterStatus.Active}>Active</option>
+          <option value={FilterStatus.Completed}>Completed</option>
         </select>
       </span>
     </p>
