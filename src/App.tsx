@@ -44,7 +44,6 @@ export const App = () => {
     async (todo: Todo) => {
       if (selectedTodo?.id === todo.id) {
         handleCloseModal();
-
         return;
       }
 
@@ -52,13 +51,12 @@ export const App = () => {
       setModalLoading(true);
       try {
         const user = await getUser(todo.userId);
-
         setSelectedUser(user);
       } finally {
         setModalLoading(false);
       }
     },
-    [handleCloseModal],
+    [handleCloseModal, selectedTodo?.id],
   );
 
   const filteredTodos = todos.filter(todo => {
